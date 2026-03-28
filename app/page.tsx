@@ -401,6 +401,7 @@ export default function AlbaranForm() {
                     <th className="p-2">Granja</th>
                     <th className="p-2">Cerdos</th>
                     <th className="p-2">Neto (Kg)</th>
+                    <th className="p-2">Media (Kg)</th>
                     <th className="p-2">Cliente</th>
                   </tr>
                 </thead>
@@ -412,6 +413,7 @@ export default function AlbaranForm() {
                       <td className="p-2">{a.granja}</td>
                       <td className="p-2">{a.cerdos}</td>
                       <td className="p-2">{a.neto}</td>
+                      <td className="p-2">{a.media}</td>
                       <td className="p-2">{a.cliente_matadero}</td>
                     </tr>
                   ))}
