@@ -1,0 +1,34 @@
+import { neon } from '@neondatabase/serverless'
+
+const sql = neon(process.env.DATABASE_URL)
+
+await sql`
+  CREATE TABLE IF NOT EXISTS albaranes (
+    id SERIAL PRIMARY KEY,
+    numero TEXT,
+    fecha TEXT,
+    hora_llegada TEXT,
+    hora_salida TEXT,
+    granja TEXT,
+    localidad TEXT,
+    rega TEXT,
+    marca_oficial TEXT,
+    num_guia TEXT,
+    cerdos INTEGER,
+    bruto NUMERIC,
+    tara NUMERIC,
+    neto NUMERIC,
+    media NUMERIC,
+    cliente_matadero TEXT,
+    h_ayuno TEXT,
+    observaciones TEXT,
+    cargador TEXT,
+    granjero TEXT,
+    chofer_nombre TEXT,
+    chofer_matricula TEXT,
+    chofer_empresa TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+  )
+`
+
+console.log('Migration completed: albaranes table created.')
