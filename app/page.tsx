@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import * as XLSX from 'xlsx'
 import { GRANJAS, type Granja } from '@/lib/granjas'
 
 export default function AlbaranForm() {
@@ -83,6 +84,37 @@ export default function AlbaranForm() {
     const data = await res.json()
     setAlbaranes(data)
     setShowList(true)
+  }
+
+  function exportToExcel() {
+    const rows = albaranes.map((a: any) => ({
+      'Nº': a.numero,
+      'Fecha': a.fecha,
+      'Hora Llegada': a.hora_llegada,
+      'Hora Salida': a.hora_salida,
+      'Granja': a.granja,
+      'Localidad': a.localidad,
+      'REGA': a.rega,
+      'Marca Oficial': a.marca_oficial,
+      'Nº Guía': a.num_guia,
+      'Cerdos': a.cerdos,
+      'Bruto': a.bruto,
+      'Tara': a.tara,
+      'Neto': a.neto,
+      'Media (Kg)': a.media,
+      'Cliente / Matadero': a.cliente_matadero,
+      'H. Ayuno': a.h_ayuno,
+      'Observaciones': a.observaciones,
+      'Cargador': a.cargador,
+      'Granjero': a.granjero,
+      'Chófer': a.chofer_nombre,
+      'Matrícula': a.chofer_matricula,
+      'Empresa': a.chofer_empresa,
+    }))
+    const ws = XLSX.utils.json_to_sheet(rows)
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, 'Albaranes')
+    XLSX.writeFile(wb, 'albaranes.xlsx')
   }
 
   function handleChange(field: string, value: string) {
@@ -379,6 +411,15 @@ export default function AlbaranForm() {
           >
             Ver Albaranes
           </button>
+          {albaranes.length > 0 && (
+            <button
+              type="button"
+              onClick={exportToExcel}
+              className="bg-green-600 text-white px-6 py-2 rounded font-bold hover:bg-green-700"
+            >
+              Exportar Excel
+            </button>
+          )}
         </div>
       </form>
 
