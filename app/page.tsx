@@ -19,7 +19,8 @@ export default function AlbaranForm() {
     tara: '',
     neto: '',
     media: '',
-    clienteMatadero: '',
+    matadero: '',
+    cliente: '',
     hAyuno: '',
     observaciones: '',
     cargador: '',
@@ -87,7 +88,7 @@ export default function AlbaranForm() {
           numero: '', fecha: new Date().toISOString().split('T')[0],
           horaLlegada: '', horaSalida: '', granja: '', localidad: '',
           rega: '', marcaOficial: '', numGuia: '', cerdos: '', bruto: '',
-          tara: '', neto: '', media: '', clienteMatadero: '', hAyuno: '',
+          tara: '', neto: '', media: '', matadero: '', cliente: '', hAyuno: '',
           observaciones: '', cargador: '', granjero: '',
           choferNombre: '', choferMatricula: '', choferEmpresa: '',
         })
@@ -298,12 +299,21 @@ export default function AlbaranForm() {
                 className="w-full border border-gray-300 rounded px-2 py-2 text-red-600 font-bold text-base text-center"
               />
             </div>
-            <div className="col-span-2">
-              <label className="block text-xs font-semibold text-gray-600 mb-1">CLIENTE / MATADERO</label>
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1">MATADERO</label>
               <input
                 type="text"
-                value={formData.clienteMatadero}
-                onChange={e => handleChange('clienteMatadero', e.target.value)}
+                value={formData.matadero}
+                onChange={e => handleChange('matadero', e.target.value)}
+                className="w-full border border-gray-300 rounded px-2 py-2 text-red-600 font-bold text-base"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-600 mb-1">CLIENTE</label>
+              <input
+                type="text"
+                value={formData.cliente}
+                onChange={e => handleChange('cliente', e.target.value)}
                 className="w-full border border-gray-300 rounded px-2 py-2 text-red-600 font-bold text-base"
               />
             </div>

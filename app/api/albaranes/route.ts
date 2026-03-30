@@ -41,7 +41,7 @@ export async function POST(request: Request) {
       numero, fecha, hora_llegada, hora_salida,
       granja, localidad, rega, marca_oficial, num_guia,
       cerdos, bruto, tara, neto, media,
-      cliente_matadero, h_ayuno,
+      cliente_matadero, cliente, h_ayuno,
       observaciones, cargador, granjero,
       chofer_nombre, chofer_matricula, chofer_empresa,
       foto_url
@@ -49,7 +49,7 @@ export async function POST(request: Request) {
       ${data.numero}, ${data.fecha}, ${data.horaLlegada}, ${data.horaSalida},
       ${data.granja}, ${data.localidad}, ${data.rega}, ${data.marcaOficial}, ${data.numGuia},
       ${data.cerdos || null}, ${data.bruto || null}, ${data.tara || null}, ${data.neto || null}, ${data.media || null},
-      ${data.clienteMatadero}, ${data.hAyuno},
+      ${data.matadero}, ${data.cliente}, ${data.hAyuno},
       ${data.observaciones}, ${data.cargador}, ${data.granjero},
       ${data.choferNombre}, ${data.choferMatricula}, ${data.choferEmpresa},
       ${fotoUrl || null}

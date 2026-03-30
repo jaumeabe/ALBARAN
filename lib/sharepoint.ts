@@ -168,7 +168,7 @@ export async function uploadAllToSharePoint(rows: any[]): Promise<void> {
       fecha: row.fecha,
       granja: row.granja,
       matadero: row.cliente_matadero,
-      cliente: row.cliente_matadero,
+      cliente: row.cliente || '',
       animales: row.cerdos ? Number(row.cerdos) : '',
       pesoNeto: row.neto ? Number(row.neto) : '',
       pesoMedio: row.media ? Number(row.media) : '',
