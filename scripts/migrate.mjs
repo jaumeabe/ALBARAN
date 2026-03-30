@@ -33,5 +33,8 @@ await sql`
 
 await sql`ALTER TABLE albaranes ADD COLUMN IF NOT EXISTS foto_url TEXT`
 await sql`ALTER TABLE albaranes ADD COLUMN IF NOT EXISTS cliente TEXT`
+await sql`ALTER TABLE albaranes ADD COLUMN IF NOT EXISTS foto_url_2 TEXT`
+await sql`ALTER TABLE albaranes ADD COLUMN IF NOT EXISTS foto_url_3 TEXT`
+await sql`ALTER TABLE albaranes ADD COLUMN IF NOT EXISTS foto_url_4 TEXT`
 
 console.log('Migration completed: albaranes table updated.')

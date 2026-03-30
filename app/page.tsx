@@ -30,8 +30,8 @@ export default function AlbaranForm() {
     choferMatricula: '',
     choferEmpresa: '',
   })
-  const [foto, setFoto] = useState<string | null>(null)
-  const [fotoPreview, setFotoPreview] = useState<string | null>(null)
+  const [fotos, setFotos] = useState<(string | null)[]>([null, null, null, null])
+  const [fotoPreviews, setFotoPreviews] = useState<(string | null)[]>([null, null, null, null])
   const [fotoKey, setFotoKey] = useState(0)
   const [granjaFromList, setGranjaFromList] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -92,7 +92,7 @@ export default function AlbaranForm() {
       { field: 'choferEmpresa', label: 'Empresa Chófer' },
     ]
     const missing = required.filter(r => !(formData as any)[r.field]?.toString().trim())
-    if (!foto) missing.push({ field: 'foto', label: 'Foto' })
+    if (!fotos[0]) missing.push({ field: 'foto', label: 'Foto (mínimo 1)' })
     if (missing.length > 0) {
       alert('Campos obligatorios sin rellenar:\n' + missing.map(m => '- ' + m.label).join('\n'))
       return
@@ -103,7 +103,7 @@ export default function AlbaranForm() {
       const res = await fetch('/api/albaranes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, foto }),
+        body: JSON.stringify({ ...formData, foto1: fotos[0], foto2: fotos[1], foto3: fotos[2], foto4: fotos[3] }),
       })
       if (res.ok) {
         alert('Albarán enviado correctamente')
@@ -116,8 +116,8 @@ export default function AlbaranForm() {
           observaciones: '', cargador: '', granjero: '',
           choferNombre: '', choferMatricula: '', choferEmpresa: '',
         })
-        setFoto(null)
-        setFotoPreview(null)
+        setFotos([null, null, null, null])
+        setFotoPreviews([null, null, null, null])
         setFotoKey(prev => prev + 1)
         setGranjaFromList(false)
         loadNextNumero()
@@ -130,13 +130,19 @@ export default function AlbaranForm() {
     }
   }
 
-  function handleFoto(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleFoto(index: number, e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
-    setFotoPreview(URL.createObjectURL(file))
+    setFotoPreviews(prev => { const n = [...prev]; n[index] = URL.createObjectURL(file); return n })
     const reader = new FileReader()
-    reader.onloadend = () => setFoto(reader.result as string)
+    reader.onloadend = () => setFotos(prev => { const n = [...prev]; n[index] = reader.result as string; return n })
     reader.readAsDataURL(file)
+  }
+
+  function removeFoto(index: number) {
+    setFotos(prev => { const n = [...prev]; n[index] = null; return n })
+    setFotoPreviews(prev => { const n = [...prev]; n[index] = null; return n })
+    setFotoKey(prev => prev + 1)
   }
 
   function handleChange(field: string, value: string) {
@@ -433,29 +439,36 @@ export default function AlbaranForm() {
           </div>
         </div>
 
-        {/* Foto */}
+        {/* Fotos */}
         <div className="border-b border-gray-300 p-3">
-          <label className="block text-xs font-semibold text-gray-600 mb-1">FOTO</label>
-          <input
-            key={fotoKey}
-            type="file"
-            accept="image/*"
-            capture="environment"
-            onChange={handleFoto}
-            className="w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100"
-          />
-          {fotoPreview && (
-            <div className="mt-2 relative">
-              <img src={fotoPreview} alt="Preview" className="max-h-40 rounded border border-gray-300" />
-              <button
-                type="button"
-                onClick={() => { setFoto(null); setFotoPreview(null) }}
-                className="absolute top-1 right-1 bg-red-600 text-white rounded-full w-6 h-6 text-xs font-bold"
-              >
-                ✕
-              </button>
-            </div>
-          )}
+          <label className="block text-xs font-semibold text-gray-600 mb-2">FOTOS (mín. 1, máx. 4)</label>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {[0, 1, 2, 3].map(i => (
+              <div key={i} className="space-y-1">
+                <span className="text-xs text-gray-500">Foto {i + 1}{i === 0 ? ' *' : ''}</span>
+                <input
+                  key={`${fotoKey}-${i}`}
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  onChange={e => handleFoto(i, e)}
+                  className="w-full text-xs text-gray-600 file:mr-1 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-700"
+                />
+                {fotoPreviews[i] && (
+                  <div className="relative">
+                    <img src={fotoPreviews[i]!} alt={`Foto ${i + 1}`} className="max-h-24 rounded border border-gray-300" />
+                    <button
+                      type="button"
+                      onClick={() => removeFoto(i)}
+                      className="absolute top-0 right-0 bg-red-600 text-white rounded-full w-5 h-5 text-xs font-bold"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Botones */}

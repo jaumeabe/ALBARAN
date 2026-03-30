@@ -155,7 +155,10 @@ const COLUMNS = [
   { header: 'Importe IVA', key: 'importeIva', width: 14 },
   { header: 'Tasa Veterinaria', key: 'tasaVeterinaria', width: 18 },
   { header: 'Tasa Interporc', key: 'tasaInterporc', width: 16 },
-  { header: 'Foto', key: 'foto', width: 40 },
+  { header: 'Foto 1', key: 'foto1', width: 40 },
+  { header: 'Foto 2', key: 'foto2', width: 40 },
+  { header: 'Foto 3', key: 'foto3', width: 40 },
+  { header: 'Foto 4', key: 'foto4', width: 40 },
 ]
 
 function setupSheet(sheet: any) {
@@ -184,13 +187,24 @@ function addRowToSheet(sheet: any, row: any) {
     importeIva: '',
     tasaVeterinaria: '',
     tasaInterporc: '',
-    foto: row.foto_url || '',
+    foto1: row.foto_url || '',
+    foto2: row.foto_url_2 || '',
+    foto3: row.foto_url_3 || '',
+    foto4: row.foto_url_4 || '',
   })
 
-  if (row.foto_url) {
-    const fotoCell = newRow.getCell('foto')
-    fotoCell.value = { text: 'Ver foto', hyperlink: row.foto_url } as any
-    fotoCell.font = { color: { argb: 'FF0066CC' }, underline: true }
+  const fotoFields = [
+    { key: 'foto1', url: row.foto_url },
+    { key: 'foto2', url: row.foto_url_2 },
+    { key: 'foto3', url: row.foto_url_3 },
+    { key: 'foto4', url: row.foto_url_4 },
+  ]
+  for (const f of fotoFields) {
+    if (f.url) {
+      const cell = newRow.getCell(f.key)
+      cell.value = { text: 'Ver foto', hyperlink: f.url } as any
+      cell.font = { color: { argb: 'FF0066CC' }, underline: true }
+    }
   }
 }
 
