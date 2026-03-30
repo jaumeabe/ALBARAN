@@ -28,7 +28,8 @@ export async function POST(request: Request) {
   if (data.foto) {
     try {
       const ext = data.foto.startsWith('data:image/png') ? 'png' : 'jpg'
-      const fileName = `albaran_${data.numero}_${Date.now()}.${ext}`
+      const fecha = data.fecha ? data.fecha.split('-').reverse().join('.') : new Date().toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '.')
+      const fileName = `Albaran_${data.numero}_${fecha}.${ext}`
       fotoUrl = await uploadPhotoToSharePoint(data.foto, fileName)
     } catch (err: any) {
       console.error('Error uploading photo:', err)
