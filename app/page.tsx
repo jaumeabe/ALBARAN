@@ -75,6 +75,26 @@ export default function AlbaranForm() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    const required: { field: string; label: string }[] = [
+      { field: 'granja', label: 'Granja' },
+      { field: 'numGuia', label: 'Núm. Guía' },
+      { field: 'cerdos', label: 'Cerdos' },
+      { field: 'bruto', label: 'Bruto' },
+      { field: 'tara', label: 'Tara' },
+      { field: 'matadero', label: 'Matadero' },
+      { field: 'cliente', label: 'Cliente' },
+      { field: 'cargador', label: 'Cargador' },
+      { field: 'granjero', label: 'Granjero' },
+      { field: 'choferNombre', label: 'Nombre Chófer' },
+      { field: 'choferMatricula', label: 'Matrícula Chófer' },
+      { field: 'choferEmpresa', label: 'Empresa Chófer' },
+    ]
+    const missing = required.filter(r => !(formData as any)[r.field]?.toString().trim())
+    if (!foto) missing.push({ field: 'foto', label: 'Foto' })
+    if (missing.length > 0) {
+      alert('Campos obligatorios sin rellenar:\n' + missing.map(m => '- ' + m.label).join('\n'))
+      return
+    }
     setSaving(true)
     setSaved(false)
     try {
@@ -84,6 +104,7 @@ export default function AlbaranForm() {
         body: JSON.stringify({ ...formData, foto }),
       })
       if (res.ok) {
+        alert('Albarán enviado correctamente')
         setSaved(true)
         setFormData({
           numero: '', fecha: new Date().toISOString().split('T')[0],
