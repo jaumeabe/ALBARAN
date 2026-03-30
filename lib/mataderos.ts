@@ -21,6 +21,9 @@ export const MATADEROS_CLIENTES: MataderoCliente[] = [
   { matadero: 'MACOBA', cliente: 'LLARG' },
   { matadero: 'OLOT MEATS', cliente: 'NOEL' },
   { matadero: 'OLOT MEATS', cliente: 'ROCA' },
+  { matadero: 'PRIMACARNE', cliente: 'PRIMACARNE' },
+  { matadero: 'BOPEPORC', cliente: 'BOPEPORC' },
+  { matadero: 'BARTRA', cliente: 'BARTRA' },
 ]
 
 export const MATADEROS = Array.from(new Set(MATADEROS_CLIENTES.map(m => m.matadero)))
