@@ -23,8 +23,8 @@ export const MATADEROS_CLIENTES: MataderoCliente[] = [
   { matadero: 'OLOT MEATS', cliente: 'ROCA' },
 ]
 
-export const MATADEROS = [...new Set(MATADEROS_CLIENTES.map(m => m.matadero))]
+export const MATADEROS = Array.from(new Set(MATADEROS_CLIENTES.map(m => m.matadero)))
 
 export function getClientesByMatadero(matadero: string): string[] {
-  return [...new Set(MATADEROS_CLIENTES.filter(m => m.matadero === matadero).map(m => m.cliente))]
+  return Array.from(new Set(MATADEROS_CLIENTES.filter(m => m.matadero === matadero).map(m => m.cliente)))
 }
