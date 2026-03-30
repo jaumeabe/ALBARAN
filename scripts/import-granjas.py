@@ -1,7 +1,7 @@
 import pandas as pd
 
 df = pd.read_excel(r"C:/Users/jaumejr/Documents/GitHub/ALBARAN/GRANJAS CEBO.xlsx")
-df = df[~df['Nombre'].str.contains('GRANJA', case=False, na=False)]
+# Incluir todas las granjas (sin filtrar)
 
 lines = [
     'export interface Granja {',
