@@ -129,65 +129,88 @@ export async function uploadPhotoToSharePoint(
   return uploadData.webUrl || ''
 }
 
+const CLIENTES_MADRES = ['PRIMACARNE', 'MARCIAL', 'BARTRA']
+const CLIENTES_TOSTONES = ['BOPEPOR']
+
+function getSheetName(cliente: string): string {
+  const c = (cliente || '').toUpperCase().trim()
+  if (CLIENTES_MADRES.includes(c)) return 'Madres'
+  if (CLIENTES_TOSTONES.includes(c)) return 'Tostones_Saldos'
+  return 'Engorde'
+}
+
+const COLUMNS = [
+  { header: 'Semana', key: 'semana', width: 10 },
+  { header: 'Fecha', key: 'fecha', width: 12 },
+  { header: 'Granja', key: 'granja', width: 30 },
+  { header: 'Matadero', key: 'matadero', width: 20 },
+  { header: 'Cliente', key: 'cliente', width: 20 },
+  { header: 'Nº Animales', key: 'animales', width: 14 },
+  { header: 'Peso Neto', key: 'pesoNeto', width: 12 },
+  { header: 'Peso Medio', key: 'pesoMedio', width: 12 },
+  { header: 'Visitador', key: 'visitador', width: 15 },
+  { header: 'Cargador', key: 'cargador', width: 15 },
+  { header: 'Chófer', key: 'chofer', width: 15 },
+  { header: 'Importe Base', key: 'importeBase', width: 14 },
+  { header: 'Importe IVA', key: 'importeIva', width: 14 },
+  { header: 'Tasa Veterinaria', key: 'tasaVeterinaria', width: 18 },
+  { header: 'Tasa Interporc', key: 'tasaInterporc', width: 16 },
+  { header: 'Foto', key: 'foto', width: 40 },
+]
+
+function setupSheet(sheet: any) {
+  sheet.columns = COLUMNS.map(c => ({ ...c }))
+  const headerRow = sheet.getRow(1)
+  headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } }
+  headerRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFCC0000' } }
+  headerRow.alignment = { horizontal: 'center' }
+}
+
+function addRowToSheet(sheet: any, row: any) {
+  const fecha = row.fecha ? new Date(row.fecha) : new Date()
+  const newRow = sheet.addRow({
+    semana: getWeekNumber(fecha),
+    fecha: row.fecha,
+    granja: row.granja,
+    matadero: row.cliente_matadero,
+    cliente: row.cliente || '',
+    animales: row.cerdos ? Number(row.cerdos) : '',
+    pesoNeto: row.neto ? Number(row.neto) : '',
+    pesoMedio: row.media ? Number(row.media) : '',
+    visitador: '',
+    cargador: row.cargador,
+    chofer: row.chofer_nombre,
+    importeBase: '',
+    importeIva: '',
+    tasaVeterinaria: '',
+    tasaInterporc: '',
+    foto: row.foto_url || '',
+  })
+
+  if (row.foto_url) {
+    const fotoCell = newRow.getCell('foto')
+    fotoCell.value = { text: 'Ver foto', hyperlink: row.foto_url } as any
+    fotoCell.font = { color: { argb: 'FF0066CC' }, underline: true }
+  }
+}
+
 export async function uploadAllToSharePoint(rows: any[]): Promise<void> {
   const token = await getAccessToken()
 
   await ensureFolder(token, FOLDER_PATH)
 
   const workbook = new ExcelJS.Workbook()
-  const sheet = workbook.addWorksheet('Albaranes')
 
-  sheet.columns = [
-    { header: 'Semana', key: 'semana', width: 10 },
-    { header: 'Fecha', key: 'fecha', width: 12 },
-    { header: 'Granja', key: 'granja', width: 30 },
-    { header: 'Matadero', key: 'matadero', width: 20 },
-    { header: 'Cliente', key: 'cliente', width: 20 },
-    { header: 'Nº Animales', key: 'animales', width: 14 },
-    { header: 'Peso Neto', key: 'pesoNeto', width: 12 },
-    { header: 'Peso Medio', key: 'pesoMedio', width: 12 },
-    { header: 'Visitador', key: 'visitador', width: 15 },
-    { header: 'Cargador', key: 'cargador', width: 15 },
-    { header: 'Chófer', key: 'chofer', width: 15 },
-    { header: 'Importe Base', key: 'importeBase', width: 14 },
-    { header: 'Importe IVA', key: 'importeIva', width: 14 },
-    { header: 'Tasa Veterinaria', key: 'tasaVeterinaria', width: 18 },
-    { header: 'Tasa Interporc', key: 'tasaInterporc', width: 16 },
-    { header: 'Foto', key: 'foto', width: 40 },
-  ]
-
-  const headerRow = sheet.getRow(1)
-  headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } }
-  headerRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFCC0000' } }
-  headerRow.alignment = { horizontal: 'center' }
+  const sheets: Record<string, any> = {}
+  const sheetNames = ['Engorde', 'Madres', 'Tostones_Saldos']
+  for (const name of sheetNames) {
+    sheets[name] = workbook.addWorksheet(name)
+    setupSheet(sheets[name])
+  }
 
   for (const row of rows) {
-    const fecha = row.fecha ? new Date(row.fecha) : new Date()
-    const newRow = sheet.addRow({
-      semana: getWeekNumber(fecha),
-      fecha: row.fecha,
-      granja: row.granja,
-      matadero: row.cliente_matadero,
-      cliente: row.cliente || '',
-      animales: row.cerdos ? Number(row.cerdos) : '',
-      pesoNeto: row.neto ? Number(row.neto) : '',
-      pesoMedio: row.media ? Number(row.media) : '',
-      visitador: '',
-      cargador: row.cargador,
-      chofer: row.chofer_nombre,
-      importeBase: '',
-      importeIva: '',
-      tasaVeterinaria: '',
-      tasaInterporc: '',
-      foto: row.foto_url || '',
-    })
-
-    // Make foto cell a clickable hyperlink
-    if (row.foto_url) {
-      const fotoCell = newRow.getCell('foto')
-      fotoCell.value = { text: 'Ver foto', hyperlink: row.foto_url } as any
-      fotoCell.font = { color: { argb: 'FF0066CC' }, underline: true }
-    }
+    const sheetName = getSheetName(row.cliente || '')
+    addRowToSheet(sheets[sheetName], row)
   }
 
   const buffer = await workbook.xlsx.writeBuffer()

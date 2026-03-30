@@ -22,7 +22,7 @@ export const MATADEROS_CLIENTES: MataderoCliente[] = [
   { matadero: 'OLOT MEATS', cliente: 'NOEL' },
   { matadero: 'OLOT MEATS', cliente: 'ROCA' },
   { matadero: 'PRIMACARNE', cliente: 'PRIMACARNE' },
-  { matadero: 'BOPEPORC', cliente: 'BOPEPORC' },
+  { matadero: 'BOPEPOR', cliente: 'BOPEPOR' },
   { matadero: 'BARTRA', cliente: 'BARTRA' },
   { matadero: 'MARCIAL', cliente: 'MARCIAL' },
 ]

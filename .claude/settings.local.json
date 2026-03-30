@@ -5,7 +5,8 @@
       "Bash(python -c \"import pandas as pd; df = pd.read_excel\\(r''C:/Users/jaumejr/Documents/GitHub/ALBARAN/GRANJAS CEBO.xlsx'', sheet_name=None\\); [print\\(f''=== {n} ===\\\\n{s.to_string\\(\\)}\\\\n''\\) for n,s in df.items\\(\\)]\")",
       "Bash(python3 -c \"import pandas as pd; df = pd.read_excel\\(r''C:/Users/jaumejr/Documents/GitHub/ALBARAN/GRANJAS CEBO.xlsx'', sheet_name=None\\); [print\\(f''=== {n} ===\\\\n{s.to_string\\(\\)}\\\\n''\\) for n,s in df.items\\(\\)]\")",
       "Bash(npx vercel:*)",
-      "Bash(node -e \":*)"
+      "Bash(node -e \":*)",
+      "Bash(node -e \"const ExcelJS = require\\(''exceljs''\\); const wb = new ExcelJS.Workbook\\(\\); wb.xlsx.readFile\\(''MATADERO CLIENTE.xlsx''\\).then\\(\\(\\) => { const ws = wb.worksheets[0]; ws.eachRow\\(\\(row, num\\) => { console.log\\(num + '': '' + row.values.slice\\(1\\).join\\('' | ''\\)\\); }\\); }\\);\")"
     ]
   }
 }
