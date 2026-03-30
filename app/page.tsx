@@ -287,7 +287,7 @@ export default function AlbaranForm() {
               <input
                 type="number"
                 value={formData.cerdos}
-                onChange={e => { if (e.target.value.length <= 3) handleChange('cerdos', e.target.value) }}
+                onChange={e => { if (e.target.value.length <= 4) handleChange('cerdos', e.target.value) }}
                 className="w-full border border-gray-300 rounded px-2 py-2 text-red-600 font-bold text-base text-center"
               />
             </div>
