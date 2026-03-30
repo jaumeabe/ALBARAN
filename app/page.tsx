@@ -225,7 +225,7 @@ export default function AlbaranForm() {
             </datalist>
           </div>
           <div className="p-3">
-            <label className="block text-xs font-semibold text-gray-600 mb-1">MARCA / REGA</label>
+            <label className="block text-xs font-semibold text-gray-600 mb-1">REGA</label>
             <input
               type="text"
               value={formData.rega}
