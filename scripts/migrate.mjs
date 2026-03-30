@@ -31,4 +31,6 @@ await sql`
   )
 `
 
-console.log('Migration completed: albaranes table created.')
+await sql`ALTER TABLE albaranes ADD COLUMN IF NOT EXISTS foto_url TEXT`
+
+console.log('Migration completed: albaranes table updated.')
