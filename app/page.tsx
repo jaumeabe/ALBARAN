@@ -160,7 +160,7 @@ export default function AlbaranForm() {
             <img src="/Logo tot roig imatge.png" alt="Premier Pigs" className="w-10 h-10 object-contain" />
             <div>
               <h1 className="text-red-700 font-bold text-lg sm:text-xl">PREMIER PIGS, S.L.</h1>
-              <p className="text-xs text-gray-600">B-02580214</p>
+              <p className="text-xs text-gray-600">B-02892024</p>
               <p className="text-xs text-gray-600">Ctra. LL-11, km 3 · 25221 ELS ALAMÚS (Lleida)</p>
               <p className="text-xs text-gray-600">Tel: 973 98 24 60 · www.premierpigs.com</p>
             </div>
