@@ -149,7 +149,7 @@ export default function AlbaranForm() {
       <div className="bg-white rounded-t-lg border-2 border-gray-300 p-3 sm:p-4">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="text-red-600 font-bold text-2xl">🐷</div>
+            <img src="/Logo tot roig imatge.png" alt="Premier Pigs" className="w-10 h-10 object-contain" />
             <div>
               <h1 className="text-red-700 font-bold text-lg sm:text-xl">PREMIER PIGS, S.L.</h1>
               <p className="text-xs text-gray-600">B-02580214</p>
