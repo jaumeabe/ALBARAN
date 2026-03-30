@@ -49,7 +49,8 @@ export async function POST(request: Request) {
       cliente_matadero, cliente, h_ayuno,
       observaciones, cargador, granjero,
       chofer_nombre, chofer_matricula, chofer_empresa,
-      foto_url, foto_url_2, foto_url_3, foto_url_4
+      foto_url, foto_url_2, foto_url_3, foto_url_4,
+      tipo_destino
     ) VALUES (
       ${data.numero}, ${data.fecha}, ${data.horaLlegada}, ${data.horaSalida},
       ${data.granja}, ${data.localidad}, ${data.rega}, ${data.marcaOficial}, ${data.numGuia},
@@ -57,7 +58,8 @@ export async function POST(request: Request) {
       ${data.matadero}, ${data.cliente}, ${data.hAyuno},
       ${data.observaciones}, ${data.cargador}, ${data.granjero},
       ${data.choferNombre}, ${data.choferMatricula}, ${data.choferEmpresa},
-      ${fotoUrls[0]}, ${fotoUrls[1]}, ${fotoUrls[2]}, ${fotoUrls[3]}
+      ${fotoUrls[0]}, ${fotoUrls[1]}, ${fotoUrls[2]}, ${fotoUrls[3]},
+      ${data.tipoDestino || 'matadero'}
     )
     RETURNING *
   `

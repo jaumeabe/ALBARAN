@@ -19,8 +19,9 @@ function getWeekNumber(date: Date): number {
 const CLIENTES_MADRES = ['PRIMACARNE', 'MARCIAL', 'BARTRA']
 const CLIENTES_TOSTONES = ['BOPEPOR']
 
-function getSheetName(cliente: string): string {
-  const c = (cliente || '').toUpperCase().trim()
+function getSheetName(row: any): string {
+  if (row.tipo_destino === 'granja') return 'Movimientos Internos'
+  const c = (row.cliente || '').toUpperCase().trim()
   if (CLIENTES_MADRES.includes(c)) return 'Madres'
   if (CLIENTES_TOSTONES.includes(c)) return 'Tostones_Saldos'
   return 'Engorde'
@@ -48,8 +49,30 @@ const COLUMNS = [
   { header: 'Foto 4', key: 'foto4', width: 40 },
 ]
 
-function setupSheet(sheet: any) {
-  sheet.columns = COLUMNS.map(c => ({ ...c }))
+const COLUMNS_INTERNOS = [
+  { header: 'Semana', key: 'semana', width: 10 },
+  { header: 'Fecha', key: 'fecha', width: 12 },
+  { header: 'Granja Origen', key: 'granja', width: 30 },
+  { header: 'Granja Destino', key: 'matadero', width: 30 },
+  { header: 'REGA Destino', key: 'cliente', width: 20 },
+  { header: 'Nº Animales', key: 'animales', width: 14 },
+  { header: 'Peso Neto', key: 'pesoNeto', width: 12 },
+  { header: 'Peso Medio', key: 'pesoMedio', width: 12 },
+  { header: 'Visitador', key: 'visitador', width: 15 },
+  { header: 'Cargador', key: 'cargador', width: 15 },
+  { header: 'Chófer', key: 'chofer', width: 15 },
+  { header: 'Importe Base', key: 'importeBase', width: 14 },
+  { header: 'Importe IVA', key: 'importeIva', width: 14 },
+  { header: 'Tasa Veterinaria', key: 'tasaVeterinaria', width: 18 },
+  { header: 'Tasa Interporc', key: 'tasaInterporc', width: 16 },
+  { header: 'Foto 1', key: 'foto1', width: 40 },
+  { header: 'Foto 2', key: 'foto2', width: 40 },
+  { header: 'Foto 3', key: 'foto3', width: 40 },
+  { header: 'Foto 4', key: 'foto4', width: 40 },
+]
+
+function setupSheet(sheet: any, columns: any[] = COLUMNS) {
+  sheet.columns = columns.map(c => ({ ...c }))
   const headerRow = sheet.getRow(1)
   headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } }
   headerRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFCC0000' } }
@@ -111,14 +134,14 @@ export async function GET() {
   const workbook = new ExcelJS.Workbook()
 
   const sheets: Record<string, any> = {}
-  const sheetNames = ['Engorde', 'Madres', 'Tostones_Saldos']
+  const sheetNames = ['Engorde', 'Madres', 'Tostones_Saldos', 'Movimientos Internos']
   for (const name of sheetNames) {
     sheets[name] = workbook.addWorksheet(name)
-    setupSheet(sheets[name])
+    setupSheet(sheets[name], name === 'Movimientos Internos' ? COLUMNS_INTERNOS : COLUMNS)
   }
 
   for (const row of rows) {
-    const sheetName = getSheetName(row.cliente || '')
+    const sheetName = getSheetName(row)
     addRowToSheet(sheets[sheetName], row)
   }
 

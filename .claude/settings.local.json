@@ -7,7 +7,8 @@
       "Bash(npx vercel:*)",
       "Bash(node -e \":*)",
       "Bash(node -e \"const ExcelJS = require\\(''exceljs''\\); const wb = new ExcelJS.Workbook\\(\\); wb.xlsx.readFile\\(''MATADERO CLIENTE.xlsx''\\).then\\(\\(\\) => { const ws = wb.worksheets[0]; ws.eachRow\\(\\(row, num\\) => { console.log\\(num + '': '' + row.values.slice\\(1\\).join\\('' | ''\\)\\); }\\); }\\);\")",
-      "Read(//c/Users/jaumejr/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/c940f0b0-e558-49a3-93b2-0afa53d00354/076b6a4b-4811-4fd9-a318-0db0ee331316/skills/xlsx/**)"
+      "Read(//c/Users/jaumejr/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/c940f0b0-e558-49a3-93b2-0afa53d00354/076b6a4b-4811-4fd9-a318-0db0ee331316/skills/xlsx/**)",
+      "mcp__Claude_Preview__preview_start"
     ]
   }
 }

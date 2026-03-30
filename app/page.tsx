@@ -34,6 +34,7 @@ export default function AlbaranForm() {
   const [fotoPreviews, setFotoPreviews] = useState<(string | null)[]>([null, null, null, null])
   const [fotoKey, setFotoKey] = useState(0)
   const [granjaFromList, setGranjaFromList] = useState(false)
+  const [tipoDestino, setTipoDestino] = useState<'matadero' | 'granja'>('matadero')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [exporting, setExporting] = useState(false)
@@ -103,7 +104,7 @@ export default function AlbaranForm() {
       const res = await fetch('/api/albaranes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, foto1: fotos[0], foto2: fotos[1], foto3: fotos[2], foto4: fotos[3] }),
+        body: JSON.stringify({ ...formData, tipoDestino, foto1: fotos[0], foto2: fotos[1], foto3: fotos[2], foto4: fotos[3] }),
       })
       if (res.ok) {
         alert('Albarán enviado correctamente')
@@ -120,6 +121,7 @@ export default function AlbaranForm() {
         setFotoPreviews([null, null, null, null])
         setFotoKey(prev => prev + 1)
         setGranjaFromList(false)
+        setTipoDestino('matadero')
         loadNextNumero()
         setTimeout(() => setSaved(false), 3000)
       }
@@ -334,40 +336,92 @@ export default function AlbaranForm() {
                 className="w-full border border-gray-300 rounded px-2 py-2 text-red-600 font-bold text-base text-center"
               />
             </div>
-            <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">MATADERO</label>
-              <input
-                type="text"
-                list="mataderos-list"
-                value={formData.matadero}
-                onChange={e => {
-                  const val = e.target.value
-                  handleChange('matadero', val)
-                  const clientes = getClientesByMatadero(val)
-                  if (clientes.length === 1) {
-                    handleChange('cliente', clientes[0])
-                  } else if (clientes.length > 1) {
-                    handleChange('cliente', '')
-                  }
-                }}
-                className="w-full border border-gray-300 rounded px-2 py-2 text-red-600 font-bold text-base"
-              />
-              <datalist id="mataderos-list">
-                {MATADEROS.map(m => <option key={m} value={m} />)}
-              </datalist>
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-gray-600 mb-1">CLIENTE</label>
-              <input
-                type="text"
-                list="clientes-list"
-                value={formData.cliente}
-                onChange={e => handleChange('cliente', e.target.value)}
-                className="w-full border border-gray-300 rounded px-2 py-2 text-red-600 font-bold text-base"
-              />
-              <datalist id="clientes-list">
-                {getClientesByMatadero(formData.matadero).map(c => <option key={c} value={c} />)}
-              </datalist>
+            <div className="col-span-2">
+              <div className="flex gap-2 mb-1">
+                <button type="button" onClick={() => { setTipoDestino('matadero'); handleChange('matadero', ''); handleChange('cliente', '') }}
+                  className={`text-xs font-bold px-2 py-1 rounded ${tipoDestino === 'matadero' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-600'}`}>
+                  MATADERO
+                </button>
+                <button type="button" onClick={() => { setTipoDestino('granja'); handleChange('matadero', ''); handleChange('cliente', '') }}
+                  className={`text-xs font-bold px-2 py-1 rounded ${tipoDestino === 'granja' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-600'}`}>
+                  GRANJA
+                </button>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">
+                    {tipoDestino === 'matadero' ? 'MATADERO' : 'GRANJA DESTINO'}
+                  </label>
+                  {tipoDestino === 'matadero' ? (
+                    <>
+                      <input
+                        type="text"
+                        list="mataderos-list"
+                        value={formData.matadero}
+                        onChange={e => {
+                          const val = e.target.value
+                          handleChange('matadero', val)
+                          const clientes = getClientesByMatadero(val)
+                          if (clientes.length === 1) {
+                            handleChange('cliente', clientes[0])
+                          } else if (clientes.length > 1) {
+                            handleChange('cliente', '')
+                          }
+                        }}
+                        className="w-full border border-gray-300 rounded px-2 py-2 text-red-600 font-bold text-base"
+                      />
+                      <datalist id="mataderos-list">
+                        {MATADEROS.map(m => <option key={m} value={m} />)}
+                      </datalist>
+                    </>
+                  ) : (
+                    <>
+                      <input
+                        type="text"
+                        list="granjas-destino-list"
+                        value={formData.matadero}
+                        onChange={e => {
+                          const val = e.target.value
+                          handleChange('matadero', val)
+                          const gDest = GRANJAS.find(g => g.nombre === val)
+                          handleChange('cliente', gDest?.rega || '')
+                        }}
+                        className="w-full border border-gray-300 rounded px-2 py-2 text-red-600 font-bold text-base"
+                        placeholder="Seleccionar granja destino"
+                      />
+                      <datalist id="granjas-destino-list">
+                        {GRANJAS.map(g => <option key={g.codigo} value={g.nombre} />)}
+                      </datalist>
+                    </>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">
+                    {tipoDestino === 'matadero' ? 'CLIENTE' : 'REGA DESTINO'}
+                  </label>
+                  {tipoDestino === 'matadero' ? (
+                    <>
+                      <input
+                        type="text"
+                        list="clientes-list"
+                        value={formData.cliente}
+                        onChange={e => handleChange('cliente', e.target.value)}
+                        className="w-full border border-gray-300 rounded px-2 py-2 text-red-600 font-bold text-base"
+                      />
+                      <datalist id="clientes-list">
+                        {getClientesByMatadero(formData.matadero).map(c => <option key={c} value={c} />)}
+                      </datalist>
+                    </>
+                  ) : (
+                    <input
+                      type="text"
+                      value={formData.cliente}
+                      onChange={e => handleChange('cliente', e.target.value)}
+                      className="w-full border border-gray-300 rounded px-2 py-2 text-red-600 font-bold text-base"
+                    />
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>

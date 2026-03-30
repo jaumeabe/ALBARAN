@@ -36,5 +36,6 @@ await sql`ALTER TABLE albaranes ADD COLUMN IF NOT EXISTS cliente TEXT`
 await sql`ALTER TABLE albaranes ADD COLUMN IF NOT EXISTS foto_url_2 TEXT`
 await sql`ALTER TABLE albaranes ADD COLUMN IF NOT EXISTS foto_url_3 TEXT`
 await sql`ALTER TABLE albaranes ADD COLUMN IF NOT EXISTS foto_url_4 TEXT`
+await sql`ALTER TABLE albaranes ADD COLUMN IF NOT EXISTS tipo_destino TEXT DEFAULT 'matadero'`
 
 console.log('Migration completed: albaranes table updated.')
