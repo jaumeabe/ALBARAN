@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { GRANJAS, type Granja } from '@/lib/granjas'
+import { MATADEROS, getClientesByMatadero } from '@/lib/mataderos'
 
 export default function AlbaranForm() {
   const [formData, setFormData] = useState({
@@ -303,19 +304,36 @@ export default function AlbaranForm() {
               <label className="block text-xs font-semibold text-gray-600 mb-1">MATADERO</label>
               <input
                 type="text"
+                list="mataderos-list"
                 value={formData.matadero}
-                onChange={e => handleChange('matadero', e.target.value)}
+                onChange={e => {
+                  const val = e.target.value
+                  handleChange('matadero', val)
+                  const clientes = getClientesByMatadero(val)
+                  if (clientes.length === 1) {
+                    handleChange('cliente', clientes[0])
+                  } else if (clientes.length > 1) {
+                    handleChange('cliente', '')
+                  }
+                }}
                 className="w-full border border-gray-300 rounded px-2 py-2 text-red-600 font-bold text-base"
               />
+              <datalist id="mataderos-list">
+                {MATADEROS.map(m => <option key={m} value={m} />)}
+              </datalist>
             </div>
             <div>
               <label className="block text-xs font-semibold text-gray-600 mb-1">CLIENTE</label>
               <input
                 type="text"
+                list="clientes-list"
                 value={formData.cliente}
                 onChange={e => handleChange('cliente', e.target.value)}
                 className="w-full border border-gray-300 rounded px-2 py-2 text-red-600 font-bold text-base"
               />
+              <datalist id="clientes-list">
+                {getClientesByMatadero(formData.matadero).map(c => <option key={c} value={c} />)}
+              </datalist>
             </div>
           </div>
         </div>
