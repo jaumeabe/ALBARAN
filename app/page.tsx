@@ -33,6 +33,7 @@ export default function AlbaranForm() {
   const [foto, setFoto] = useState<string | null>(null)
   const [fotoPreview, setFotoPreview] = useState<string | null>(null)
   const [fotoKey, setFotoKey] = useState(0)
+  const [granjaFromList, setGranjaFromList] = useState(false)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [exporting, setExporting] = useState(false)
@@ -64,12 +65,13 @@ export default function AlbaranForm() {
 
   function handleGranjaChange(nombre: string) {
     const granja = GRANJAS.find(g => g.nombre === nombre)
+    setGranjaFromList(!!granja)
     setFormData(prev => ({
       ...prev,
       granja: nombre,
-      localidad: granja?.localidad || '',
-      rega: granja?.rega || '',
-      marcaOficial: granja?.marcaOficial || '',
+      localidad: granja?.localidad || (granja ? prev.localidad : ''),
+      rega: granja?.rega || (granja ? prev.rega : ''),
+      marcaOficial: granja?.marcaOficial || (granja ? prev.marcaOficial : ''),
     }))
   }
 
@@ -117,6 +119,7 @@ export default function AlbaranForm() {
         setFoto(null)
         setFotoPreview(null)
         setFotoKey(prev => prev + 1)
+        setGranjaFromList(false)
         loadNextNumero()
         setTimeout(() => setSaved(false), 3000)
       }
@@ -226,8 +229,9 @@ export default function AlbaranForm() {
             <input
               type="text"
               value={formData.rega}
+              readOnly={granjaFromList}
               onChange={e => handleChange('rega', e.target.value)}
-              className="w-full border border-gray-300 rounded px-2 py-2 text-red-600 font-semibold text-base"
+              className={`w-full border rounded px-2 py-2 text-red-600 font-semibold text-base ${granjaFromList ? 'border-gray-200 bg-gray-50' : 'border-gray-300'}`}
             />
           </div>
         </div>
@@ -239,8 +243,9 @@ export default function AlbaranForm() {
             <input
               type="text"
               value={formData.localidad}
+              readOnly={granjaFromList}
               onChange={e => handleChange('localidad', e.target.value)}
-              className="w-full border border-gray-300 rounded px-2 py-2 text-red-600 font-semibold text-base"
+              className={`w-full border rounded px-2 py-2 text-red-600 font-semibold text-base ${granjaFromList ? 'border-gray-200 bg-gray-50' : 'border-gray-300'}`}
             />
           </div>
           <div className="p-3">
@@ -260,8 +265,9 @@ export default function AlbaranForm() {
           <input
             type="text"
             value={formData.marcaOficial}
+            readOnly={granjaFromList}
             onChange={e => handleChange('marcaOficial', e.target.value)}
-            className="w-full border border-gray-300 rounded px-2 py-2 text-red-600 font-semibold text-base"
+            className={`w-full border rounded px-2 py-2 text-red-600 font-semibold text-base ${granjaFromList ? 'border-gray-200 bg-gray-50' : 'border-gray-300'}`}
           />
         </div>
 
