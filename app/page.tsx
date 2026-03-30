@@ -250,7 +250,7 @@ export default function AlbaranForm() {
               <input
                 type="number"
                 value={formData.cerdos}
-                onChange={e => handleChange('cerdos', e.target.value)}
+                onChange={e => { if (e.target.value.length <= 3) handleChange('cerdos', e.target.value) }}
                 className="w-full border border-gray-300 rounded px-2 py-2 text-red-600 font-bold text-base text-center"
               />
             </div>
@@ -259,7 +259,7 @@ export default function AlbaranForm() {
               <input
                 type="number"
                 value={formData.bruto}
-                onChange={e => handleChange('bruto', e.target.value)}
+                onChange={e => { if (e.target.value.length <= 5) handleChange('bruto', e.target.value) }}
                 className="w-full border border-gray-300 rounded px-2 py-2 text-red-600 font-bold text-base text-center"
               />
             </div>
@@ -268,7 +268,7 @@ export default function AlbaranForm() {
               <input
                 type="number"
                 value={formData.tara}
-                onChange={e => handleChange('tara', e.target.value)}
+                onChange={e => { if (e.target.value.length <= 5) handleChange('tara', e.target.value) }}
                 className="w-full border border-gray-300 rounded px-2 py-2 text-red-600 font-bold text-base text-center"
               />
             </div>
