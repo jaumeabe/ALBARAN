@@ -1,4 +1,6 @@
 export const dynamic = 'force-dynamic'
+export const revalidate = 0
+export const fetchCache = 'force-no-store'
 
 import { getDb } from '@/lib/db'
 import { NextResponse } from 'next/server'
@@ -113,6 +115,7 @@ export async function GET() {
       'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       'Content-Disposition': 'attachment; filename=albaranes.xlsx',
       'X-SharePoint-Error': sharepointError || '',
+      'Cache-Control': 'no-store, no-cache, must-revalidate',
     },
   })
 }
