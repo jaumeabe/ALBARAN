@@ -209,24 +209,25 @@ export default function AlbaranForm() {
         <div className="grid grid-cols-1 sm:grid-cols-2 border-b border-gray-300">
           <div className="p-3 border-b sm:border-b-0 sm:border-r border-gray-300">
             <label className="block text-xs font-semibold text-gray-600 mb-1">GRANJA</label>
-            <select
+            <input
+              type="text"
+              list="granjas-list"
               value={formData.granja}
               onChange={e => handleGranjaChange(e.target.value)}
               className="w-full border border-gray-300 rounded px-2 py-2 text-red-600 font-semibold bg-white text-base"
-            >
-              <option value="">-- Seleccionar granja --</option>
-              {GRANJAS.map(g => (
-                <option key={g.codigo} value={g.nombre}>{g.nombre}</option>
-              ))}
-            </select>
+              placeholder="Seleccionar o escribir granja"
+            />
+            <datalist id="granjas-list">
+              {GRANJAS.map(g => <option key={g.codigo} value={g.nombre} />)}
+            </datalist>
           </div>
           <div className="p-3">
             <label className="block text-xs font-semibold text-gray-600 mb-1">MARCA / REGA</label>
             <input
               type="text"
               value={formData.rega}
-              readOnly
-              className="w-full border border-gray-200 rounded px-2 py-2 text-red-600 font-semibold bg-gray-50 text-base"
+              onChange={e => handleChange('rega', e.target.value)}
+              className="w-full border border-gray-300 rounded px-2 py-2 text-red-600 font-semibold text-base"
             />
           </div>
         </div>
@@ -238,8 +239,8 @@ export default function AlbaranForm() {
             <input
               type="text"
               value={formData.localidad}
-              readOnly
-              className="w-full border border-gray-200 rounded px-2 py-2 text-red-600 font-semibold bg-gray-50 text-base"
+              onChange={e => handleChange('localidad', e.target.value)}
+              className="w-full border border-gray-300 rounded px-2 py-2 text-red-600 font-semibold text-base"
             />
           </div>
           <div className="p-3">
@@ -259,8 +260,8 @@ export default function AlbaranForm() {
           <input
             type="text"
             value={formData.marcaOficial}
-            readOnly
-            className="w-full border border-gray-200 rounded px-2 py-2 text-red-600 font-semibold bg-gray-50 text-base"
+            onChange={e => handleChange('marcaOficial', e.target.value)}
+            className="w-full border border-gray-300 rounded px-2 py-2 text-red-600 font-semibold text-base"
           />
         </div>
 
