@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { GRANJAS, type Granja } from '@/lib/granjas'
 import { MATADEROS, getClientesByMatadero } from '@/lib/mataderos'
+import { getCrianza } from '@/lib/crianzas'
 
 export default function AlbaranForm() {
   const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ export default function AlbaranForm() {
     horaSalida: '',
     granja: '',
     localidad: '',
+    crianza: '',
     rega: '',
     marcaOficial: '',
     numGuia: '',
@@ -70,6 +72,7 @@ export default function AlbaranForm() {
     setFormData(prev => ({
       ...prev,
       granja: nombre,
+      crianza: getCrianza(nombre),
       localidad: granja?.localidad || (granja ? prev.localidad : ''),
       rega: granja?.rega || (granja ? prev.rega : ''),
       marcaOficial: granja?.marcaOficial || (granja ? prev.marcaOficial : ''),
@@ -112,7 +115,7 @@ export default function AlbaranForm() {
         setFormData({
           numero: '', fecha: new Date().toISOString().split('T')[0],
           horaLlegada: '', horaSalida: '', granja: '', localidad: '',
-          rega: '', marcaOficial: '', numGuia: '', cerdos: '', bruto: '',
+          crianza: '', rega: '', marcaOficial: '', numGuia: '', cerdos: '', bruto: '',
           tara: '', neto: '', media: '', matadero: '', cliente: '', hAyuno: '',
           observaciones: '', cargador: '', granjero: '',
           choferNombre: '', choferMatricula: '', choferEmpresa: '',
@@ -244,8 +247,8 @@ export default function AlbaranForm() {
           </div>
         </div>
 
-        {/* Localidad y Guía */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 border-b border-gray-300">
+        {/* Localidad, Crianza y Guía */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 border-b border-gray-300">
           <div className="p-3 border-b sm:border-b-0 sm:border-r border-gray-300">
             <label className="block text-xs font-semibold text-gray-600 mb-1">LOCALIDAD</label>
             <input
@@ -254,6 +257,15 @@ export default function AlbaranForm() {
               readOnly={granjaFromList}
               onChange={e => handleChange('localidad', e.target.value)}
               className={`w-full border rounded px-2 py-2 text-red-600 font-semibold text-base ${granjaFromList ? 'border-gray-200 bg-gray-50' : 'border-gray-300'}`}
+            />
+          </div>
+          <div className="p-3 border-b sm:border-b-0 sm:border-r border-gray-300">
+            <label className="block text-xs font-semibold text-gray-600 mb-1">CRIANZA</label>
+            <input
+              type="text"
+              value={formData.crianza}
+              onChange={e => handleChange('crianza', e.target.value)}
+              className="w-full border border-gray-300 rounded px-2 py-2 text-red-600 font-semibold text-base"
             />
           </div>
           <div className="p-3">

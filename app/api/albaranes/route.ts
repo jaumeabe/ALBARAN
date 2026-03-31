@@ -44,7 +44,7 @@ export async function POST(request: Request) {
   const row = await sql`
     INSERT INTO albaranes (
       numero, fecha, hora_llegada, hora_salida,
-      granja, localidad, rega, marca_oficial, num_guia,
+      granja, localidad, crianza, rega, marca_oficial, num_guia,
       cerdos, bruto, tara, neto, media,
       cliente_matadero, cliente, h_ayuno,
       observaciones, cargador, granjero,
@@ -53,7 +53,7 @@ export async function POST(request: Request) {
       tipo_destino
     ) VALUES (
       ${data.numero}, ${data.fecha}, ${data.horaLlegada}, ${data.horaSalida},
-      ${data.granja}, ${data.localidad}, ${data.rega}, ${data.marcaOficial}, ${data.numGuia},
+      ${data.granja}, ${data.localidad}, ${data.crianza || null}, ${data.rega}, ${data.marcaOficial}, ${data.numGuia},
       ${data.cerdos || null}, ${data.bruto || null}, ${data.tara || null}, ${data.neto || null}, ${data.media || null},
       ${data.matadero}, ${data.cliente}, ${data.hAyuno},
       ${data.observaciones}, ${data.cargador}, ${data.granjero},
