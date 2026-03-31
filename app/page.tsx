@@ -269,25 +269,25 @@ export default function AlbaranForm() {
             />
           </div>
           <div className="p-3">
-            <label className="block text-xs font-semibold text-gray-600 mb-1">NÚM. GUÍA</label>
+            <label className="block text-xs font-semibold text-gray-600 mb-1">MARCA OFICIAL</label>
             <input
               type="text"
-              value={formData.numGuia}
-              onChange={e => handleChange('numGuia', e.target.value)}
-              className="w-full border border-gray-300 rounded px-2 py-2 text-red-600 font-semibold text-base"
+              value={formData.marcaOficial}
+              readOnly={granjaFromList}
+              onChange={e => handleChange('marcaOficial', e.target.value)}
+              className={`w-full border rounded px-2 py-2 text-red-600 font-semibold text-base ${granjaFromList ? 'border-gray-200 bg-gray-50' : 'border-gray-300'}`}
             />
           </div>
         </div>
 
-        {/* Marca Oficial */}
+        {/* Núm. Guía */}
         <div className="border-b border-gray-300 p-3">
-          <label className="block text-xs font-semibold text-gray-600 mb-1">MARCA OFICIAL</label>
+          <label className="block text-xs font-semibold text-gray-600 mb-1">NÚM. GUÍA</label>
           <input
             type="text"
-            value={formData.marcaOficial}
-            readOnly={granjaFromList}
-            onChange={e => handleChange('marcaOficial', e.target.value)}
-            className={`w-full border rounded px-2 py-2 text-red-600 font-semibold text-base ${granjaFromList ? 'border-gray-200 bg-gray-50' : 'border-gray-300'}`}
+            value={formData.numGuia}
+            onChange={e => handleChange('numGuia', e.target.value)}
+            className="w-full border border-gray-300 rounded px-2 py-2 text-red-600 font-semibold text-base"
           />
         </div>
 
