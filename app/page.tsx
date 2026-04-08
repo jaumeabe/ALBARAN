@@ -516,7 +516,6 @@ export default function AlbaranForm() {
                   key={`${fotoKey}-${i}`}
                   type="file"
                   accept="image/*"
-                  capture="environment"
                   onChange={e => handleFoto(i, e)}
                   className="w-full text-xs text-gray-600 file:mr-1 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-700"
                 />
