@@ -4,34 +4,38 @@ import { useState, useEffect } from 'react'
 import { GRANJAS, type Granja } from '@/lib/granjas'
 import { MATADEROS, getClientesByMatadero } from '@/lib/mataderos'
 import { getCrianza } from '@/lib/crianzas'
+import { queueAlbaran, countPending, flushPending } from '@/lib/offline-queue'
+
+const emptyForm = {
+  numero: '',
+  numeroAlbaranInterno: '',
+  fecha: new Date().toISOString().split('T')[0],
+  horaLlegada: '',
+  horaSalida: '',
+  granja: '',
+  localidad: '',
+  crianza: '',
+  rega: '',
+  marcaOficial: '',
+  numGuia: '',
+  cerdos: '',
+  bruto: '',
+  tara: '',
+  neto: '',
+  media: '',
+  matadero: '',
+  cliente: '',
+  hAyuno: '',
+  observaciones: '',
+  cargador: '',
+  granjero: '',
+  choferNombre: '',
+  choferMatricula: '',
+  choferEmpresa: '',
+}
 
 export default function AlbaranForm() {
-  const [formData, setFormData] = useState({
-    numero: '',
-    fecha: new Date().toISOString().split('T')[0],
-    horaLlegada: '',
-    horaSalida: '',
-    granja: '',
-    localidad: '',
-    crianza: '',
-    rega: '',
-    marcaOficial: '',
-    numGuia: '',
-    cerdos: '',
-    bruto: '',
-    tara: '',
-    neto: '',
-    media: '',
-    matadero: '',
-    cliente: '',
-    hAyuno: '',
-    observaciones: '',
-    cargador: '',
-    granjero: '',
-    choferNombre: '',
-    choferMatricula: '',
-    choferEmpresa: '',
-  })
+  const [formData, setFormData] = useState(emptyForm)
   const [fotos, setFotos] = useState<(string | null)[]>([null, null, null, null])
   const [fotoPreviews, setFotoPreviews] = useState<(string | null)[]>([null, null, null, null])
   const [fotoKey, setFotoKey] = useState(0)
@@ -40,6 +44,9 @@ export default function AlbaranForm() {
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [exporting, setExporting] = useState(false)
+  const [isOnline, setIsOnline] = useState(true)
+  const [pendingCount, setPendingCount] = useState(0)
+  const [flushing, setFlushing] = useState(false)
 
   async function loadNextNumero() {
     try {
@@ -52,6 +59,42 @@ export default function AlbaranForm() {
   }
 
   useEffect(() => { loadNextNumero() }, [])
+
+  async function refreshPending() {
+    try { setPendingCount(await countPending()) } catch {}
+  }
+
+  async function tryFlush(notify: boolean) {
+    if (typeof navigator !== 'undefined' && !navigator.onLine) return
+    setFlushing(true)
+    try {
+      const result = await flushPending()
+      await refreshPending()
+      if (notify && result.sent > 0) {
+        alert(`Se han enviado ${result.sent} albarán(es) pendiente(s).`)
+      }
+      if (notify && result.failed > 0) {
+        alert(`No se han podido enviar ${result.failed} albarán(es). Se reintentarán al recuperar la conexión.`)
+      }
+    } finally {
+      setFlushing(false)
+    }
+  }
+
+  useEffect(() => {
+    if (typeof navigator !== 'undefined') setIsOnline(navigator.onLine)
+    refreshPending()
+    tryFlush(false)
+    const handleOnline = () => { setIsOnline(true); tryFlush(true) }
+    const handleOffline = () => setIsOnline(false)
+    window.addEventListener('online', handleOnline)
+    window.addEventListener('offline', handleOffline)
+    return () => {
+      window.removeEventListener('online', handleOnline)
+      window.removeEventListener('offline', handleOffline)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     const bruto = parseFloat(formData.bruto) || 0
@@ -79,6 +122,16 @@ export default function AlbaranForm() {
     }))
   }
 
+  function resetForm() {
+    setFormData(emptyForm)
+    setFotos([null, null, null, null])
+    setFotoPreviews([null, null, null, null])
+    setFotoKey(prev => prev + 1)
+    setGranjaFromList(false)
+    setTipoDestino('matadero')
+    loadNextNumero()
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     const required: { field: string; label: string }[] = [
@@ -103,33 +156,43 @@ export default function AlbaranForm() {
     }
     setSaving(true)
     setSaved(false)
+    const payload = { ...formData, tipoDestino, foto1: fotos[0], foto2: fotos[1], foto3: fotos[2], foto4: fotos[3] }
+    const saveOffline = async (reason: 'offline' | 'error') => {
+      try {
+        await queueAlbaran(payload)
+        await refreshPending()
+        setSaved(true)
+        resetForm()
+        setTimeout(() => setSaved(false), 3000)
+        alert(
+          reason === 'offline'
+            ? 'Sin conexión. El albarán se ha guardado en el dispositivo y se enviará automáticamente al recuperar la cobertura.'
+            : 'No se ha podido contactar con el servidor. El albarán se ha guardado en el dispositivo y se reintentará automáticamente.'
+        )
+      } catch {
+        alert('Error al guardar el albarán. Inténtalo de nuevo.')
+      }
+    }
     try {
+      if (typeof navigator !== 'undefined' && !navigator.onLine) {
+        await saveOffline('offline')
+        return
+      }
       const res = await fetch('/api/albaranes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, tipoDestino, foto1: fotos[0], foto2: fotos[1], foto3: fotos[2], foto4: fotos[3] }),
+        body: JSON.stringify(payload),
       })
       if (res.ok) {
         alert('Albarán enviado correctamente')
         setSaved(true)
-        setFormData({
-          numero: '', fecha: new Date().toISOString().split('T')[0],
-          horaLlegada: '', horaSalida: '', granja: '', localidad: '',
-          crianza: '', rega: '', marcaOficial: '', numGuia: '', cerdos: '', bruto: '',
-          tara: '', neto: '', media: '', matadero: '', cliente: '', hAyuno: '',
-          observaciones: '', cargador: '', granjero: '',
-          choferNombre: '', choferMatricula: '', choferEmpresa: '',
-        })
-        setFotos([null, null, null, null])
-        setFotoPreviews([null, null, null, null])
-        setFotoKey(prev => prev + 1)
-        setGranjaFromList(false)
-        setTipoDestino('matadero')
-        loadNextNumero()
+        resetForm()
         setTimeout(() => setSaved(false), 3000)
+      } else {
+        await saveOffline('error')
       }
     } catch (err) {
-      alert('Error al guardar el albarán')
+      await saveOffline('error')
     } finally {
       setSaving(false)
     }
@@ -173,18 +236,52 @@ export default function AlbaranForm() {
               <span className="text-xs text-gray-500">ISO 9001</span>
               <span className="text-xs text-gray-500">OCA</span>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold">ALBARÁN:</span>
-              <input
-                type="text"
-                value={formData.numero}
-                readOnly
-                className="border border-gray-400 px-2 py-1 w-20 sm:w-28 text-center font-bold text-red-600 bg-gray-50"
-              />
+            <div className="flex flex-col gap-1 items-end">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-semibold">ALBARÁN:</span>
+                <input
+                  type="text"
+                  value={formData.numero}
+                  readOnly
+                  className="border border-gray-400 px-2 py-1 w-20 sm:w-28 text-center font-bold text-red-600 bg-gray-50"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold text-gray-600">N.º INTERNO:</span>
+                <input
+                  type="text"
+                  value={formData.numeroAlbaranInterno}
+                  onChange={e => handleChange('numeroAlbaranInterno', e.target.value)}
+                  placeholder="Ej: 2026-001"
+                  className="border border-gray-400 px-2 py-1 w-24 sm:w-32 text-center font-bold text-red-600"
+                />
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Estado conexión / pendientes */}
+      {(!isOnline || pendingCount > 0) && (
+        <div className={`mt-2 rounded border-2 p-2 text-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 ${!isOnline ? 'bg-yellow-50 border-yellow-400 text-yellow-800' : 'bg-blue-50 border-blue-400 text-blue-800'}`}>
+          <div className="font-semibold">
+            {!isOnline && 'Sin conexión. '}
+            {pendingCount > 0
+              ? `${pendingCount} albarán(es) pendiente(s) de enviar.`
+              : 'Los albaranes se guardarán en el dispositivo hasta recuperar la cobertura.'}
+          </div>
+          {pendingCount > 0 && isOnline && (
+            <button
+              type="button"
+              onClick={() => tryFlush(true)}
+              disabled={flushing}
+              className="bg-blue-600 text-white px-3 py-1 rounded text-xs font-bold hover:bg-blue-700 disabled:opacity-50"
+            >
+              {flushing ? 'Enviando...' : 'Reintentar envío'}
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="bg-white border-x-2 border-b-2 border-gray-300 rounded-b-lg">
