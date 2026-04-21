@@ -30,6 +30,7 @@ function getSheetName(row: any): string {
 const COLUMNS = [
   { header: 'Semana', key: 'semana', width: 10 },
   { header: 'Fecha', key: 'fecha', width: 12 },
+  { header: 'Nº Interno', key: 'numeroInterno', width: 14 },
   { header: 'Granja', key: 'granja', width: 30 },
   { header: 'Crianza', key: 'crianza', width: 10 },
   { header: 'Matadero', key: 'matadero', width: 20 },
@@ -53,6 +54,7 @@ const COLUMNS = [
 const COLUMNS_INTERNOS = [
   { header: 'Semana', key: 'semana', width: 10 },
   { header: 'Fecha', key: 'fecha', width: 12 },
+  { header: 'Nº Interno', key: 'numeroInterno', width: 14 },
   { header: 'Granja Origen', key: 'granja', width: 30 },
   { header: 'Crianza', key: 'crianza', width: 10 },
   { header: 'Granja Destino', key: 'matadero', width: 30 },
@@ -86,6 +88,7 @@ function addRowToSheet(sheet: any, row: any) {
   const newRow = sheet.addRow({
     semana: getWeekNumber(fecha),
     fecha: row.fecha,
+    numeroInterno: row.numero_albaran_interno || '',
     granja: row.granja,
     crianza: row.crianza || '',
     matadero: row.cliente_matadero,
